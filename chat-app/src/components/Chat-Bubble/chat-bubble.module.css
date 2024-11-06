@@ -1,0 +1,15 @@
+.chatColor {
+    background-color: lightgray;
+}
+.chatLeft
+{
+    margin-left: auto;
+    width: 70%;
+    padding:1em;
+}
+
+.chatRight
+{
+    width: 70%;
+    padding:1em;
+}

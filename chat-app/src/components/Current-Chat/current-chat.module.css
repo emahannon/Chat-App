@@ -1,0 +1,12 @@
+.chatbar{
+    padding: 3em;
+    width: 100%;
+}
+.container{
+    width: 100%;
+}
+.history{
+    width: 100%;
+    padding-left: 5em;
+    padding-right: 5em;
+}

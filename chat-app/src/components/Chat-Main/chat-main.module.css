@@ -1,0 +1,14 @@
+.sidebar{
+    background-color: grey;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px; /* Set sidebar width as needed */
+    height: 100vh; /* Full viewport height */
+}
+
+@media (max-width: 950px) {
+    .sidebar {
+        display: none;
+    }
+}

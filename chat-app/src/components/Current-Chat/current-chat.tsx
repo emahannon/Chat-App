@@ -20,27 +20,21 @@ interface Message {
 }
 
 const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
-    const [messages, setMessages] = useState<Message[]>([]);
+    const storageKey = `chatMessages_${selectedItem}`;
+    const [messages, setMessages] = useState<Message[]>(JSON.parse(localStorage.getItem(storageKey) || '[]') as Message[]);
     const [input, setInput] = useState('');
+    const [messagesReceivedCount, setMessagesReceivedCount] = useState(0);
+    // It would be better to store the API key in a secure location, such as a server environment variable.
+    // However, for the purpose of this demo, we will store it in the client-side code.
     const API_KEY = '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';
     const inference = new HfInference(API_KEY);
 
     const historyRef = useRef<HTMLDivElement>(null);
-    const storageKey = `chatMessages_${selectedItem}`;
 
     // Load messages from localStorage on mount
     useEffect(() => {
         if (selectedItem) {
-            const savedMessages = localStorage.getItem(storageKey);
-            if (savedMessages) {
-                const parsedMessages = JSON.parse(savedMessages);
-                console.log(savedMessages);
-                console.log(JSON.parse(savedMessages))
-                setMessages(parsedMessages);
-                console.log(messages);
-            } else {
-                setMessages([]); // Reset if no messages found for this chat
-            }
+            setMessages(JSON.parse(localStorage.getItem(storageKey) || '[]') as Message[]);
         }
     }, [selectedItem]);
     // Save messages to localStorage whenever they change
@@ -49,7 +43,7 @@ const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
             console.log(messages)
             localStorage.setItem(storageKey, JSON.stringify(messages));
         }
-    }, [messages, selectedItem]);
+    }, [messagesReceivedCount]);
 
     const sendMessage = async (message: string) => {
         try {
@@ -77,6 +71,7 @@ const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
                     return updatedMessages;
                 });
             }
+            setMessagesReceivedCount(messagesReceivedCount + 1);
         } catch (error) {
             console.error("Error fetching message:", error);
         }

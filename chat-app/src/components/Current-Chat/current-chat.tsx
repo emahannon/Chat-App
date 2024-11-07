@@ -33,21 +33,20 @@ const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
         if (selectedItem) {
             const savedMessages = localStorage.getItem(storageKey);
             if (savedMessages) {
-                console.log(savedMessages)
                 const parsedMessages = JSON.parse(savedMessages);
+                console.log(savedMessages);
+                console.log(JSON.parse(savedMessages))
                 setMessages(parsedMessages);
-                // setMessages([...parsedMessages]);
-                // setMessages((prevMessages) => [
-                //     ...prevMessages,
-                //     parsedMessages
-                // ]);
+                console.log(messages);
+            } else {
+                setMessages([]); // Reset if no messages found for this chat
             }
         }
     }, [selectedItem]);
     // Save messages to localStorage whenever they change
     useEffect(() => {
         if (selectedItem) {
-            // console.log(messages)
+            console.log(messages)
             localStorage.setItem(storageKey, JSON.stringify(messages));
         }
     }, [messages, selectedItem]);

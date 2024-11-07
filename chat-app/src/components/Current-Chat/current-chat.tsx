@@ -1,12 +1,8 @@
 import React, { FC, ReactElement, useState, useRef, useEffect } from 'react';
-import axios from 'axios';
 import { HfInference } from "@huggingface/inference";
 
 import '@jetbrains/ring-ui-built/components/style.css';
 
-import { Grid } from "@jetbrains/ring-ui-built/components/grid/grid";
-import Row from "@jetbrains/ring-ui-built/components/grid/row";
-import Col from "@jetbrains/ring-ui-built/components/grid/col";
 import Input from "@jetbrains/ring-ui-built/components/input/input";
 import Button from "@jetbrains/ring-ui-built/components/button/button";
 
@@ -30,7 +26,6 @@ const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
     const [input, setInput] = useState('');
     const API_KEY = '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';
     const inference = new HfInference(API_KEY);
-    // const [scrolling, setScrolling] = useState(false);
 
     // Create a reference for the chat history div
     const historyRef = useRef<HTMLDivElement>(null);
@@ -76,13 +71,6 @@ const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
         sendMessage(input);
         setInput('');
     };
-
-    // const handleScroll = () => {
-    //     if (historyRef.current) {
-    //         const isAtBottom = historyRef.current.scrollHeight - historyRef.current.scrollTop === historyRef.current.clientHeight;
-    //         setScrolling(isAtBottom);  // Set scrolling state based on position
-    //     }
-    // };
 
     // Scroll to the bottom of the chat history whenever a new message is added
     useEffect(() => {

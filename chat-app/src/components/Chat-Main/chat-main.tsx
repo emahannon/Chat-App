@@ -11,6 +11,13 @@ import Sidebar from "@jetbrains/ring-ui-built/components/content-layout/sidebar"
 import DropdownMenu from "@jetbrains/ring-ui-built/components/dropdown-menu/dropdown-menu"
 import Button from "@jetbrains/ring-ui-built/components/button/button";
 import Text from "@jetbrains/ring-ui-built/components/text/text";
+import {Grid} from "@jetbrains/ring-ui-built/components/grid/grid";
+import Row from "@jetbrains/ring-ui-built/components/grid/row";
+import Col from "@jetbrains/ring-ui-built/components/grid/col";
+import addCircle from '@jetbrains/icons/add-circle-20px';
+import Dropdown from "@jetbrains/ring-ui-built/components/dropdown/dropdown";
+import PopupMenu from "@jetbrains/ring-ui-built/components/popup-menu/popup-menu";
+
 
 // Parameters go here
 type ChatProps = {
@@ -36,10 +43,26 @@ const ChatMain: FC<ChatProps> = ({}): ReactElement => {
         <>
             <div className={styles.container}>
                 <div className={styles.sidebar}>
-                    <Text className={styles.text}>Model Selection</Text>
-                    <DropdownMenu data={data} anchor={selectedItem} onSelect={handleSelection} />
-                    <Text className={styles.text}>New Chat</Text>
-                    <Text className={styles.text}>Chat History</Text>
+                    <Grid>
+                        <Row className={styles.row}>
+                            <Text className={styles.text}>Model Selection</Text>
+                        </Row>
+                        <Row>
+                            <Dropdown anchor={<Button dropdown>{selectedItem}</Button>}>
+                                <PopupMenu closeOnSelect data={data} onSelect={handleSelection} />
+                            </Dropdown>
+                        </Row>
+                        <Row className={styles.row}>
+                            <Text className={styles.text}>New Chat</Text>
+                            <Button className={styles.button} icon={addCircle} onClick={() => window.location.reload()}></Button>
+                        </Row>
+                        <Row className={styles.row}>
+                            <Text className={styles.text}>Chat History</Text>
+                        </Row>
+                    </Grid>
+
+
+
                 </div>
                 <div className={styles.content}>
                     <CurrentChat selectedItem={selectedItem}></CurrentChat>

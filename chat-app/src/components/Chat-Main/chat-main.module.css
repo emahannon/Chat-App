@@ -34,7 +34,8 @@
 /*}*/
 
 .text{
-    color: lightgray;
+    color: white;
+    font-weight: bold;
 }
 
 /* Main container to hold sidebar and content */
@@ -51,7 +52,7 @@
     color: white;
     padding: 20px;
     box-sizing: border-box;
-    overflow-y: auto; /* Make content scrollable if it overflows */
+    /*overflow-y: auto; !* Make content scrollable if it overflows *!*/
 }
 
 /* Content area styling */
@@ -61,4 +62,21 @@
     background-color: #f4f4f4;
     box-sizing: border-box;
     overflow-y: auto; /* Make content scrollable if it overflows */
+}
+
+.dropdown {
+
+    background-color: #e6e6e6;
+    border-radius: 1.5em;
+    padding-left: .7em;
+    padding-right: .7em;
+    padding-top: .3em;
+    padding-bottom: .3em;
+    font-size: .85em;
+
+}
+
+.row {
+    padding-top:1.5em;
+    padding-bottom:.5em;
 }

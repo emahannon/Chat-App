@@ -1,5 +1,7 @@
 import React, {FC, ReactElement, useState} from 'react';
 import axios from 'axios';
+import { HfInference } from "@huggingface/inference";
+
 import '@jetbrains/ring-ui-built/components/style.css';
 
 
@@ -25,52 +27,54 @@ type ChatProps = {
 }
 
 interface Message {
-    text: string;
-    sender: 'user' | 'bot';
+    role: string;
+    content: string;
 }
 
 
 const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
-
     const API_KEY = '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';
-    const API_URL = 'https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct';
+    const inference = new HfInference(API_KEY);
 
-
-    // Send message to Hugging Face API
     const sendMessage = async (message: string) => {
-        // Add user message to state
-        setMessages([...messages, { text: message, sender: 'user' }]);
-
         try {
-            const response = await axios.post(
-                API_URL,
-                { inputs: message },
-                {
-                    headers: {
-                        Authorization: `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
+            // Add the user message to the messages array
+            const newMessage: Message = { role: "user", content: message };
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
 
-            // Get the response from the API
-            const botMessage = response.data[0]?.generated_text;
+            // Initially add an empty assistant message to the messages array
+            const assistantMessage: Message = { role: "assistant", content: "" };
+            setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
-            // Add bot response to state
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { text: botMessage || 'No response', sender: 'bot' },
-            ]);
+            let assistantMessageContent = "";
+
+            // Stream the assistant's message
+            for await (const chunk of inference.chatCompletionStream({
+                model: "microsoft/Phi-3-mini-4k-instruct",
+                messages: [{ role: "user", content: message }],
+                max_tokens: 500,
+            })) {
+                const responseChunk = chunk.choices[0]?.delta?.content || "";
+                assistantMessageContent += responseChunk;
+
+                // Update the last message in the messages array (the assistant's message)
+                setMessages((prevMessages) => {
+                    const updatedMessages = [...prevMessages];
+                    updatedMessages[updatedMessages.length - 1] = {
+                        role: "assistant",
+                        content: assistantMessageContent,
+                    };
+                    return updatedMessages;
+                });
+            }
         } catch (error) {
-            console.error('Error fetching response from Hugging Face:', error);
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { text: 'Sorry, something went wrong.', sender: 'bot' },
-            ]);
+            console.error("Error fetching message:", error);
         }
     };
+
+
 
 
 
@@ -95,7 +99,7 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
                     <div className={styles.chatbar}>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <Input className={styles.container} multiline label=""
-
+                                   value={input}
                                    placeholder={"Let's chat! Type here...."} size={Size.L}
                                    onChange={handleInputChange}/>
                             <Button icon={replyArrow} title="Icon button" onClick={handleSubmit}/>
@@ -107,13 +111,13 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
                         {messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`message ${message.sender}`}
+                                className={`message ${message.role}`}
                             >
-                                {message.sender === 'user' ? (
+                                {message.role === 'user' ? (
 
-                                    <ChatBubble highlight={true} content={message.text}/>
+                                    <ChatBubble highlight={true} content={message.content}/>
                                 ) : (
-                                    <ChatBubble content={message.text}/>
+                                    <ChatBubble content={message.content}/>
                                 )}
                             </div>
                         ))}
@@ -123,7 +127,7 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
 
                 </Row>
             </Grid>
-            
+
         </>
     )
 };

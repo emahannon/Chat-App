@@ -2,10 +2,8 @@ import React, { FC, ReactElement, useState, useRef, useEffect } from 'react';
 import { HfInference } from "@huggingface/inference";
 
 import '@jetbrains/ring-ui-built/components/style.css';
-
 import Input from "@jetbrains/ring-ui-built/components/input/input";
 import Button from "@jetbrains/ring-ui-built/components/button/button";
-
 import { Size } from "@jetbrains/ring-ui-built/components/input/input";
 import replyArrow from '@jetbrains/icons/reply-20px';
 
@@ -27,8 +25,32 @@ const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
     const API_KEY = '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';
     const inference = new HfInference(API_KEY);
 
-    // Create a reference for the chat history div
     const historyRef = useRef<HTMLDivElement>(null);
+    const storageKey = `chatMessages_${selectedItem}`;
+
+    // Load messages from localStorage on mount
+    useEffect(() => {
+        if (selectedItem) {
+            const savedMessages = localStorage.getItem(storageKey);
+            if (savedMessages) {
+                console.log(savedMessages)
+                const parsedMessages = JSON.parse(savedMessages);
+                setMessages(parsedMessages);
+                // setMessages([...parsedMessages]);
+                // setMessages((prevMessages) => [
+                //     ...prevMessages,
+                //     parsedMessages
+                // ]);
+            }
+        }
+    }, [selectedItem]);
+    // Save messages to localStorage whenever they change
+    useEffect(() => {
+        if (selectedItem) {
+            // console.log(messages)
+            localStorage.setItem(storageKey, JSON.stringify(messages));
+        }
+    }, [messages, selectedItem]);
 
     const sendMessage = async (message: string) => {
         try {
@@ -81,7 +103,7 @@ const CurrentChat: FC<ChatProps> = ({ selectedItem }): ReactElement => {
 
     return (
         <div className={styles.chatContainer}>
-            <div className={styles.history} ref={historyRef} >
+            <div className={styles.history} ref={historyRef}>
                 {messages.map((message, index) => (
                     <div key={index} className={`message ${message.role}`}>
                         {message.role === 'user' ? (

@@ -1,12 +1,37 @@
-.chatbar{
-    padding: 3em;
-    width: 100%;
+/*.chatbar{*/
+/*    padding: 3em;*/
+/*    width: 100%;*/
+/*    !*width: 80%;*!*/
+/*    !*justify-content: center;*!*/
+/*}*/
+/*.container{*/
+/*    width: 100%;*/
+/*}*/
+/*.history{*/
+/*    width: 100%;*/
+/*    padding-left: 5em;*/
+/*    padding-right: 5em;*/
+/*}*/
+
+
+.chatContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
 }
-.container{
-    width: 100%;
+
+.history {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px; /* Optional: space around the messages */
 }
-.history{
+
+.chatbar {
+    display: flex;
+    padding-bottom: 2em;
+    padding-top: 1em;
+    position: sticky;
+    justify-content: center;
+    bottom: 0;
     width: 100%;
-    padding-left: 5em;
-    padding-right: 5em;
 }

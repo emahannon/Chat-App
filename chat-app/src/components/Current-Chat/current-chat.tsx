@@ -94,39 +94,68 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
 
     return (
         <>
-            <Grid>
-                <Row start="xs">
-                    <div className={styles.chatbar}>
-                        <div style={{display: 'flex', alignItems: 'center'}}>
-                            <Input className={styles.container} multiline label=""
-                                   value={input}
-                                   placeholder={"Let's chat! Type here...."} size={Size.L}
-                                   onChange={handleInputChange}/>
-                            <Button icon={replyArrow} title="Icon button" onClick={handleSubmit}/>
+
+            {/*<Grid>*/}
+            {/*    <Row start="xs">*/}
+            {/*        <div className={styles.history}>*/}
+            {/*            {messages.map((message, index) => (*/}
+            {/*                <div*/}
+            {/*                    key={index}*/}
+            {/*                    className={`message ${message.role}`}*/}
+            {/*                >*/}
+            {/*                    {message.role === 'user' ? (*/}
+
+            {/*                        <ChatBubble highlight={true} content={message.content}/>*/}
+            {/*                    ) : (*/}
+            {/*                        <ChatBubble content={message.content}/>*/}
+            {/*                    )}*/}
+            {/*                </div>*/}
+            {/*            ))}*/}
+
+            {/*        </div>*/}
+
+
+            {/*    </Row>*/}
+            {/*    <Row >*/}
+            {/*        <div className={styles.chatbar}>*/}
+            {/*            <div style={{display: 'flex', alignItems: 'center'}}>*/}
+            {/*                <Input className={styles.container} multiline label=""*/}
+            {/*                       value={input}*/}
+            {/*                       placeholder={"Let's chat! Type here...."} size={Size.L}*/}
+            {/*                       onChange={handleInputChange}/>*/}
+            {/*                <Button icon={replyArrow} title="Icon button" onClick={handleSubmit}/>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </Row>*/}
+
+            {/*</Grid>*/}
+
+            <div className={styles.chatContainer}>
+                <div className={styles.history}>
+                    {messages.map((message, index) => (
+                        <div key={index} className={`message ${message.role}`}>
+                            {message.role === 'user' ? (
+                                <ChatBubble highlight={true} content={message.content}/>
+                            ) : (
+                                <ChatBubble content={message.content}/>
+                            )}
                         </div>
-                    </div>
-                </Row>
-                <Row>
-                    <div className={styles.history}>
-                        {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`message ${message.role}`}
-                            >
-                                {message.role === 'user' ? (
+                    ))}
+                </div>
 
-                                    <ChatBubble highlight={true} content={message.content}/>
-                                ) : (
-                                    <ChatBubble content={message.content}/>
-                                )}
-                            </div>
-                        ))}
-
-                    </div>
-
-
-                </Row>
-            </Grid>
+                <div className={styles.chatbar}>
+                    <Input
+                        className={styles.container}
+                        multiline
+                        label=""
+                        value={input}
+                        placeholder={"Let's chat! Type here...."}
+                        size={Size.L}
+                        onChange={handleInputChange}
+                    />
+                    <Button icon={replyArrow} title="Icon button" onClick={handleSubmit}/>
+                </div>
+            </div>
 
         </>
     )

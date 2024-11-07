@@ -104,36 +104,26 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
                 </Row>
                 <Row>
                     <div className={styles.history}>
-                        <ChatBubble highlight={true} content={"this is more user input!"}/>
+                        {messages.map((message, index) => (
+                            <div
+                                key={index}
+                                className={`message ${message.sender}`}
+                            >
+                                {message.sender === 'user' ? (
 
-                        <ChatBubble content={"This is from the bot!"}/>
-                        <ChatBubble highlight={true} content={"this is more user input!"}/>
-                        <ChatBubble content={"More bot input."}/>
-                        <ChatBubble highlight={true} content={"this is more user input!"}/>
-
+                                    <ChatBubble highlight={true} content={message.text}/>
+                                ) : (
+                                    <ChatBubble content={message.text}/>
+                                )}
+                            </div>
+                        ))}
 
                     </div>
 
 
                 </Row>
             </Grid>
-            <div> hello</div>
-            <div className="messages">
-                {messages.map((message, index) => (
-                    <div
-                        key={index}
-                        className={`message ${message.sender}`}
-                    >
-                        {message.sender === 'user' ? (
-                            <div className="user-message">{message.text}</div>
-                        ) : (
-                            <div className="bot-message">{message.text}</div>
-                        )}
-                    </div>
-                ))}
-            </div>
-
-
+            
         </>
     )
 };

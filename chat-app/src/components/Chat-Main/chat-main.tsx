@@ -1,5 +1,5 @@
 
-import React, {FC, ReactElement} from 'react';
+import React, {FC, ReactElement, useState} from 'react';
 import '@jetbrains/ring-ui-built/components/style.css';
 
 
@@ -9,6 +9,8 @@ import CurrentChat from "../Current-Chat/current-chat";
 import ContentLayout from "@jetbrains/ring-ui-built/components/content-layout/content-layout";
 import Sidebar from "@jetbrains/ring-ui-built/components/content-layout/sidebar";
 import DropdownMenu from "@jetbrains/ring-ui-built/components/dropdown-menu/dropdown-menu"
+import Button from "@jetbrains/ring-ui-built/components/button/button";
+import Text from "@jetbrains/ring-ui-built/components/text/text";
 
 // Parameters go here
 type ChatProps = {
@@ -17,43 +19,44 @@ type ChatProps = {
 
 
 const ChatMain: FC<ChatProps> = ({}): ReactElement => {
-    const data = [{
-        label: 'Item'
-    }, {
-        label: 'Link to jetbrains.com',
-        href: 'http://www.jetbrains.com'
-    }, {
-        rgItemType: DropdownMenu.ListProps.Type.SEPARATOR
-    }, {
-        rgItemType: DropdownMenu.ListProps.Type.LINK,
-        label: 'Link Item'
-    }, {
-        rgItemType: DropdownMenu.ListProps.Type.LINK,
-        label: 'Link Item With Additional Class',
-        className: 'test'
-    }, {
-        rgItemType: DropdownMenu.ListProps.Type.SEPARATOR,
-        description: 'Separator With Description'
-    }, {
-        rgItemType: DropdownMenu.ListProps.Type.TITLE,
-        label: 'Title'
-    }, {
-        rgItemType: DropdownMenu.ListProps.Type.ITEM,
-        label: '1 Element in group'
-    }, {
-        rgItemType: DropdownMenu.ListProps.Type.ITEM,
-        label: '2 Element in group'
-    }];
+    const [selectedItem, setSelectedItem] = useState<string>('microsoft/Phi-3-mini-4k-instruct');
 
+    const data = [
+        { label: 'microsoft/Phi-3-mini-4k-instruct' },
+        { label: 'HuggingFaceH4/starchat2-15b-v0.1' }
+
+    ];
+
+
+    const handleSelection = (item: { label: string }) => {
+        setSelectedItem(item.label); // Update selected item
+    };
 
     return (
         <>
-            <ContentLayout>
-                <Sidebar className={styles.sidebar}>
-                    <DropdownMenu data={data} anchor={'Switch current model'} />
-                </Sidebar>
-                <CurrentChat></CurrentChat>
-            </ContentLayout>
+            <div className={styles.container}>
+                <div className={styles.sidebar}>
+                    <Text className={styles.text}>Model Selection</Text>
+                    <DropdownMenu data={data} anchor={selectedItem} onSelect={handleSelection} />
+                    <Text className={styles.text}>New Chat</Text>
+                    <Text className={styles.text}>Chat History</Text>
+                </div>
+                <div className={styles.content}>
+                    <CurrentChat selectedItem={selectedItem}></CurrentChat>
+                </div>
+            </div>
+
+
+            {/*<ContentLayout>*/}
+            {/*    <Sidebar className={styles.sidebar}>*/}
+            {/*        <Text>Model Selection</Text>*/}
+            {/*        <div className={styles.dropDown}>*/}
+            {/*            <DropdownMenu data={data} anchor={selectedItem} onSelect={handleSelection} />*/}
+
+            {/*        </div>*/}
+            {/*    </Sidebar>*/}
+            {/*    <CurrentChat selectedItem={selectedItem}></CurrentChat>*/}
+            {/*</ContentLayout>*/}
         </>
     )
 };

@@ -1,14 +1,64 @@
-.sidebar{
-    background-color: lightgrey;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 250px; /* Set sidebar width as needed */
-    height: 100vh; /* Full viewport height */
+/*.sidebar{*/
+
+/*    font-size: .8em;*/
+/*    !*background-color: lightgrey;*!*/
+/*    !*!*position: fixed;*!*!*/
+/*    !*!*top: 0;*!*!*/
+/*    !*!*left: 0;*!*!*/
+/*    !*!*!*padding-right: 10em;*!*!*!*/
+/*    !*!*width: 1000px !important;*!*!*/
+/*    !*!*!*width: 100vh; !* Set sidebar width as needed *!*!*!*!*/
+/*    height: 100vh; !* Full viewport height *!*/
+/*}*/
+
+
+/*@media (max-width: 950px) {*/
+/*    .sidebar {*/
+/*        display: none;*/
+/*    }*/
+/*}*/
+
+/*.grid {*/
+/*    height: 100vh;*/
+/*}*/
+
+/*.dropDown{*/
+/*    !*padding-left: .5em;*!*/
+/*    !*padding-right: .5em;*!*/
+/*    !*padding-top: .3em;*!*/
+/*    !*padding-bottom: .3em;*!*/
+/*    justify-content: center;*/
+/*    position: absolute;*/
+/*    !*margin-top: 1em;*!*/
+/*    !*border-radius: .5em;*!*/
+/*}*/
+
+.text{
+    color: lightgray;
 }
 
-@media (max-width: 950px) {
-    .sidebar {
-        display: none;
-    }
+/* Main container to hold sidebar and content */
+.container {
+    display: flex;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden; /* Prevent overflow */
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 20em; /* Fixed width for sidebar */
+    background-color: #333; /* Dark background */
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Make content scrollable if it overflows */
+}
+
+/* Content area styling */
+.content {
+    flex: 1; /* Take remaining space */
+    padding: 20px;
+    background-color: #f4f4f4;
+    box-sizing: border-box;
+    overflow-y: auto; /* Make content scrollable if it overflows */
 }

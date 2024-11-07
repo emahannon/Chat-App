@@ -1,15 +1,25 @@
 .chatColor {
-    background-color: lightgray;
+    background-color: #e6e6e6;
+    /*border-color: lightgray;*/
 }
 .chatLeft
 {
     margin-left: auto;
     width: 70%;
     padding:1em;
+    font-size: .9em;
 }
 
 .chatRight
 {
     width: 70%;
     padding:1em;
+    font-size: .9em;
+
+}
+
+.button
+{
+    margin-left: 1em;
+    margin-bottom: 1em;
 }

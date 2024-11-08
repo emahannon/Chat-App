@@ -163,7 +163,7 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
                         <Text className={styles.text}>Chat History</Text>
                     </Row>
 
-                    <div className={styles.history}>
+                    <div className={styles.totalHistory}>
                         {sessionList.map((sessionKey, index) => (
                             <div key={sessionKey}>
                                 <Row >

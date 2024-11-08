@@ -2,7 +2,6 @@ import React, { FC, ReactElement, useState, useRef, useEffect } from 'react';
 import { HfInference } from "@huggingface/inference";
 import { v4 as uuidv4 } from "uuid";
 
-
 import '@jetbrains/ring-ui-built/components/style.css';
 import Input from "@jetbrains/ring-ui-built/components/input/input";
 import Button from "@jetbrains/ring-ui-built/components/button/button";
@@ -11,61 +10,47 @@ import replyArrow from '@jetbrains/icons/reply-20px';
 import addCircle from '@jetbrains/icons/add-circle-filled-20px';
 import pastChatIcon from '@jetbrains/icons/artifacts-20px';
 
-
 import styles from './current-chat.module.css';
 import ChatBubble from "../Chat-Bubble/chat-bubble";
-import {Grid} from "@jetbrains/ring-ui-built/components/grid/grid";
+import { Grid } from "@jetbrains/ring-ui-built/components/grid/grid";
 import Row from "@jetbrains/ring-ui-built/components/grid/row";
 import Text from "@jetbrains/ring-ui-built/components/text/text";
 import Dropdown from "@jetbrains/ring-ui-built/components/dropdown/dropdown";
 import PopupMenu from "@jetbrains/ring-ui-built/components/popup-menu/popup-menu";
-
-type ChatProps = {
-};
 
 interface Message {
     role: string;
     content: string;
 }
 
-const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
+const CurrentChat: FC = (): ReactElement => {
     const [selectedItem, setSelectedItem] = useState<string>('microsoft/Phi-3-mini-4k-instruct');
     const [input, setInput] = useState('');
     const [messagesReceivedCount, setMessagesReceivedCount] = useState(0);
     const [sessionId, setSessionId] = useState<string>(uuidv4());
-    const [sessionList, setSessionList] = useState<string[]>([]);
+    const [sessionList, setSessionList] = useState<string[]>(() => JSON.parse(localStorage.getItem('chatSessions') || '[]'));
+    const [messages, setMessages] = useState<Message[]>([]);
     const storageKey = `chatMessages_${selectedItem}_${sessionId}`;
-    const [messages, setMessages] = useState<Message[]>(JSON.parse(localStorage.getItem(storageKey) || '[]') as Message[]);
 
-    // It would be better to store the API key in a secure location, such as a server environment variable.
-    // However, for the purpose of this demo, we will store it in the client-side code.
     const API_KEY = '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';
     const inference = new HfInference(API_KEY);
-
     const historyRef = useRef<HTMLDivElement>(null);
 
-    // Load messages from localStorage on mount
+    // Load session messages from localStorage when `selectedItem` or `sessionId` changes
     useEffect(() => {
-        if (selectedItem) {
-            setMessages(JSON.parse(localStorage.getItem(storageKey) || '[]') as Message[]);
-        }
-    }, [selectedItem]);
+        const savedMessages = localStorage.getItem(storageKey);
+        setMessages(savedMessages ? JSON.parse(savedMessages) : []);
+    }, [selectedItem, sessionId]);
 
     // Save messages to localStorage whenever they change
     useEffect(() => {
-        if (selectedItem) {
-            console.log(messages)
-            localStorage.setItem(storageKey, JSON.stringify(messages));
-        }
-    }, [messagesReceivedCount]);
+        localStorage.setItem(storageKey, JSON.stringify(messages));
+    }, [messages]);
 
+    // Persist the session list to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('chatSessions', JSON.stringify(sessionList));
     }, [sessionList]);
-
-    useEffect(() => {
-        setSessionList(JSON.parse(localStorage.getItem('chatSessions') || '[]'));
-    }, [sessionId]);
 
     const sendMessage = async (message: string) => {
         try {
@@ -93,7 +78,7 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
                     return updatedMessages;
                 });
             }
-            setMessagesReceivedCount(messagesReceivedCount + 1);
+            setMessagesReceivedCount((count) => count + 1);
         } catch (error) {
             console.error("Error fetching message:", error);
         }
@@ -106,10 +91,9 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         if (input.trim() === '') return;
-        await sendMessage(input); // Await here to handle the Promise
+        await sendMessage(input);
         setInput('');
     };
-
 
     // Scroll to the bottom of the chat history whenever a new message is added
     useEffect(() => {
@@ -118,105 +102,68 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
         }
     }, [messages]);
 
-
-    const data = [
-        { label: 'microsoft/Phi-3-mini-4k-instruct' },
-        { label: 'HuggingFaceH4/starchat2-15b-v0.1' }
-
-    ];
-
-
     const handleSelection = (item: { label: string }) => {
-        setSelectedItem(item.label); // Update selected item
+        setSelectedItem(item.label);
     };
 
-
-    // need to fix the below two functions
     const loadSession = (sessionKey: string) => {
         const loadedMessages = localStorage.getItem(sessionKey);
         if (loadedMessages) {
             setMessages(JSON.parse(loadedMessages));
-            setSessionId(sessionKey);
+            setSessionId(sessionKey.split('_').pop() || uuidv4());
         }
     };
 
     const startNewSession = () => {
         const newSessionId = uuidv4();
         setSessionId(newSessionId);
-        setMessages([]); // Clear current messages for a new session
-        setSessionList((prevList) => [...prevList, `chatMessages_${selectedItem}_${newSessionId}`]);
+        setMessages([]);
+        const newSessionKey = `chatMessages_${selectedItem}_${newSessionId}`;
+        setSessionList((prevList) => [...prevList, newSessionKey]);
     };
 
-
     return (
-        <>
         <div className={styles.container}>
             <div className={styles.sidebar}>
                 <Grid>
+                    <Row className={styles.row}>
+                        <Text className={styles.text}>New Chat</Text>
+                        <Button icon={addCircle} onClick={startNewSession}></Button>
+                    </Row>
                     <Row className={styles.row}>
                         <Text className={styles.text}>Model Selection</Text>
                     </Row>
                     <Row>
                         <Dropdown anchor={<Button dropdown>{selectedItem}</Button>}>
-                            <PopupMenu closeOnSelect data={data} onSelect={handleSelection}/>
+                            <PopupMenu data={[{ label: 'microsoft/Phi-3-mini-4k-instruct' }, { label: 'HuggingFaceH4/starchat2-15b-v0.1' }]} onSelect={handleSelection} />
                         </Dropdown>
                     </Row>
                     <Row className={styles.row}>
-                        <Text className={styles.text}>New Chat</Text>
-                        <Button className={styles.button} icon={addCircle}
-                                onClick={startNewSession}></Button>
+                        <Text className={styles.text}>Chat History of {selectedItem}</Text>
                     </Row>
-
-                    <Row className={styles.row}>
-                        <Text className={styles.text}>Chat History</Text>
-                    </Row>
-
                     <div className={styles.totalHistory}>
                         {sessionList.map((sessionKey, index) => (
-                            <div key={sessionKey}>
-                                <Row >
-                                    <Button icon={pastChatIcon} title="Icon button" onClick={() => loadSession(sessionKey)}>Session {index+1}</Button>
-                                </Row>
-                            </div>
+                            <Row key={sessionKey}>
+                                <Button icon={pastChatIcon} onClick={() => loadSession(sessionKey)}>Session {index + 1}</Button>
+                            </Row>
                         ))}
                     </div>
                 </Grid>
-
-
             </div>
-
             <div className={styles.content}>
                 <div className={styles.chatContainer}>
-
-
                     <div className={styles.history} ref={historyRef}>
                         {messages.map((message, index) => (
-                            <div key={index} className={`message ${message.role}`}>
-                                {message.role === 'user' ? (
-                                    <ChatBubble highlight={true} content={message.content}/>
-                                ) : (
-                                    <ChatBubble content={message.content}/>
-                                )}
-                            </div>
+                            <ChatBubble key={index} highlight={message.role === 'user'} content={message.content} />
                         ))}
                     </div>
-
                     <div className={styles.chatbar}>
-                        <Input
-                            multiline
-                            label=""
-                            value={input}
-                            placeholder={"Let's chat! Type here...."}
-                            size={Size.L}
-                            onChange={handleInputChange}
-                        />
-                        <Button icon={replyArrow} title="Icon button" onClick={handleSubmit}/>
+                        <Input multiline value={input} placeholder="Let's chat! Type here...." size={Size.L} onChange={handleInputChange} />
+                        <Button icon={replyArrow} onClick={handleSubmit} />
                     </div>
-      </div>
-         </div>
-</div>
-
-        </>
+                </div>
+            </div>
+        </div>
     );
 };
 

@@ -146,18 +146,27 @@ const CurrentChat: FC = (): ReactElement => {
                     </Row>
                     <Row className={styles.rowModel}>
                         <Dropdown anchor={<Button dropdown>{selectedItem}</Button>}>
-                            <PopupMenu data={[{ label: 'microsoft/Phi-3-mini-4k-instruct' }, { label: 'HuggingFaceH4/starchat2-15b-v0.1' }]} onSelect={handleSelection} />
+                            <PopupMenu
+                                data={[{label: 'microsoft/Phi-3-mini-4k-instruct'}, {label: 'HuggingFaceH4/starchat2-15b-v0.1'}]}
+                                onSelect={handleSelection}/>
                         </Dropdown>
                     </Row>
                     <Row className={styles.row}>
                         <Text className={styles.historyText}>Chat History of {selectedItem}</Text>
                     </Row>
                     <div className={styles.totalHistory}>
-                        {sessionList.map((sessionKey, index) => (
-                            <Row key={sessionKey}>
-                                <Button icon={pastChatIcon} onClick={() => loadSession(sessionKey)}>Session {index + 1}</Button>
-                            </Row>
-                        ))}
+                        {sessionList
+                            .filter(sessionKey => sessionKey.startsWith(`chatMessages_${selectedItem}_`)) // Filter sessions by selected model
+                            .map((sessionKey, index) => (
+                                <Row key={sessionKey}>
+                                    <Button
+                                        icon={pastChatIcon}
+                                        onClick={() => loadSession(sessionKey)}
+                                    >
+                                        Session {index + 1}
+                                    </Button>
+                                </Row>
+                            ))}
                     </div>
                 </Grid>
             </div>
@@ -165,11 +174,11 @@ const CurrentChat: FC = (): ReactElement => {
                 <div className={styles.chatContainer}>
                     <div className={styles.history} ref={historyRef}>
                         {messages.map((message, index) => (
-                            <ChatBubble key={index} highlight={message.role === 'user'} content={message.content} />
+                            <ChatBubble key={index} highlight={message.role === 'user'} content={message.content}/>
                         ))}
                     </div>
                     <div className={styles.chatbar}>
-                        <Input multiline value={input} placeholder="Let's chat! Type here...." size={Size.L} onChange={handleInputChange} />
+                    <Input multiline value={input} placeholder="Let's chat! Type here...." size={Size.L} onChange={handleInputChange} />
                         <Button icon={replyArrow} onClick={handleSubmit} />
                     </div>
                 </div>

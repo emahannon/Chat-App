@@ -8,6 +8,7 @@ import Island, {Header, Content} from "@jetbrains/ring-ui-built/components/islan
 import styles from "./chat-bubble.module.css"
 import Button from "@jetbrains/ring-ui-built/components/button/button";
 import copy from '@jetbrains/icons/copy-20px';
+import clipboard from "@jetbrains/ring-ui-built/components/clipboard/clipboard";
 
 
 // Parameters go here
@@ -20,23 +21,14 @@ type ChatProps = {
 
 const ChatBubble: FC<ChatProps> = ({ highlight = false, content }): ReactElement => {
 
-    const handleCopy = () => {
-        // Use the Clipboard API to copy the content to the clipboard
-        navigator.clipboard.writeText(content).then(() => {
-            alert('Content copied to clipboard!'); // You can customize this feedback as needed
-        }).catch(err => {
-            alert('Failed to copy: ' + err);
-        });
-    };
-
-
     return (
         <>
             <div className={highlight ? styles.chatLeft : styles.chatRight}>
 
                     <Island className={highlight ? styles.chatColor : ''}>
                         <Content>{content}</Content>
-                        {!highlight && <Button className={styles.button} short icon={copy} onClick={handleCopy}>Copy Response</Button>}
+                        {!highlight && <Button className={styles.button} short icon={copy} onClick={() => clipboard.copyText(content, 'Text copied!', 'Text copying error')}>Copy Response</Button>}
+
                     </Island>
             </div>
 

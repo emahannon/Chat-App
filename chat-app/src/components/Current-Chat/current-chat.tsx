@@ -59,6 +59,14 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
         }
     }, [messagesReceivedCount]);
 
+    useEffect(() => {
+        localStorage.setItem('chatSessions', JSON.stringify(sessionList));
+    }, [sessionList]);
+
+    useEffect(() => {
+        setSessionList(JSON.parse(localStorage.getItem('chatSessions') || '[]'));
+    }, [sessionId]);
+
     const sendMessage = async (message: string) => {
         try {
             const newMessage: Message = { role: "user", content: message };
@@ -128,7 +136,7 @@ const CurrentChat: FC<ChatProps> = ({}): ReactElement => {
         const loadedMessages = localStorage.getItem(sessionKey);
         if (loadedMessages) {
             setMessages(JSON.parse(loadedMessages));
-            setSessionId(sessionKey.replace('chatSession_', ''));
+            setSessionId(sessionKey);
         }
     };
 

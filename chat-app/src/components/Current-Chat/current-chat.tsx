@@ -26,12 +26,13 @@ interface Message {
 const CurrentChat: FC = (): ReactElement => {
     const [selectedItem, setSelectedItem] = useState<string>('microsoft/Phi-3-mini-4k-instruct');
     const [input, setInput] = useState('');
-    const [messagesReceivedCount, setMessagesReceivedCount] = useState(0);
     const [sessionId, setSessionId] = useState<string>(uuidv4());
     const [sessionList, setSessionList] = useState<string[]>(() => JSON.parse(localStorage.getItem('chatSessions') || '[]'));
     const [messages, setMessages] = useState<Message[]>([]);
     const storageKey = `chatMessages_${selectedItem}_${sessionId}`;
 
+    // It would be better to store the API key in a secure location, such as a server environment variable.
+    // However, for the purpose of this demo, we will store it in the client-side code.
     const API_KEY = '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';
     const inference = new HfInference(API_KEY);
     const historyRef = useRef<HTMLDivElement>(null);
@@ -52,18 +53,31 @@ const CurrentChat: FC = (): ReactElement => {
         localStorage.setItem('chatSessions', JSON.stringify(sessionList));
     }, [sessionList]);
 
+    // Scroll to the bottom of the chat history whenever a new message is added
+    useEffect(() => {
+        if (historyRef.current) {
+            historyRef.current.scrollTop = historyRef.current.scrollHeight;
+        }
+    }, [messages]);
+
     const sendMessage = async (message: string) => {
         try {
+            // Add the user's message to the conversation history
             const newMessage: Message = { role: "user", content: message };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
 
+            // Add a placeholder for the assistant's response
             const assistantMessage: Message = { role: "assistant", content: "" };
             setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+
+            const MAX_HISTORY_LENGTH = 10;
+            // Prepare the conversation history for the API request
+            const conversationHistory = [...messages, newMessage].slice(-MAX_HISTORY_LENGTH);
 
             let assistantMessageContent = "";
             for await (const chunk of inference.chatCompletionStream({
                 model: selectedItem,
-                messages: [{ role: "user", content: message }],
+                messages: conversationHistory, // Use the full conversation history
                 max_tokens: 500,
             })) {
                 const responseChunk = chunk.choices[0]?.delta?.content || "";
@@ -78,7 +92,6 @@ const CurrentChat: FC = (): ReactElement => {
                     return updatedMessages;
                 });
             }
-            setMessagesReceivedCount((count) => count + 1);
         } catch (error) {
             console.error("Error fetching message:", error);
         }
@@ -94,13 +107,6 @@ const CurrentChat: FC = (): ReactElement => {
         await sendMessage(input);
         setInput('');
     };
-
-    // Scroll to the bottom of the chat history whenever a new message is added
-    useEffect(() => {
-        if (historyRef.current) {
-            historyRef.current.scrollTop = historyRef.current.scrollHeight;
-        }
-    }, [messages]);
 
     const handleSelection = (item: { label: string }) => {
         setSelectedItem(item.label);
@@ -133,13 +139,13 @@ const CurrentChat: FC = (): ReactElement => {
                     <Row className={styles.row}>
                         <Text className={styles.text}>Model Selection</Text>
                     </Row>
-                    <Row>
+                    <Row className={styles.rowModel}>
                         <Dropdown anchor={<Button dropdown>{selectedItem}</Button>}>
                             <PopupMenu data={[{ label: 'microsoft/Phi-3-mini-4k-instruct' }, { label: 'HuggingFaceH4/starchat2-15b-v0.1' }]} onSelect={handleSelection} />
                         </Dropdown>
                     </Row>
                     <Row className={styles.row}>
-                        <Text className={styles.text}>Chat History of {selectedItem}</Text>
+                        <Text className={styles.historyText}>Chat History of {selectedItem}</Text>
                     </Row>
                     <div className={styles.totalHistory}>
                         {sessionList.map((sessionKey, index) => (

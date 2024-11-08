@@ -1,16 +1,15 @@
 .chatContainer {
     display: flex;
     flex-direction: column;
-    height: 95svh; /* Full viewport height */
+    height: 95svh;
 }
 
 .totalHistory {
     flex: 1;
     overflow-x:hidden;
     width: 50%;
-    max-height: 34.4em; /* Set this to the height you want */
+    max-height: 34.4em;
     overflow-y: auto;
-    /*padding: 1em; !* Optional: space around the messages *!*/
 }
 
 .history {
@@ -18,12 +17,10 @@
     overflow-y: auto;
     overflow-x:hidden;
     width: 100%;
-    /*padding: 1em; !* Optional: space around the messages *!*/
 }
 
 .chatbar {
     display: flex;
-    /*padding-bottom: 2em;*/
     padding-top: 1em;
     position: sticky;
     justify-content: center;
@@ -31,18 +28,21 @@
     width: 100%;
 }
 
-
-
 .text{
     color: white;
     font-weight: bold;
 }
 
+.historyText {
+    color: white;
+    font-weight: bold;
+    padding-right: 2em;
+}
+
 /*!* Main container to hold sidebar and content *!*/
 .container {
     display: flex;
-    /*height: 100vh; !* Full viewport height *!*/
-    /*overflow: hidden; !* Prevent overflow *!*/
+    height: 100vh; /* Full viewport height */
 }
 
 /*!* Sidebar styling *!*/
@@ -52,7 +52,6 @@
     color: white;
     padding: 20px;
     box-sizing: border-box;
-    /*overflow-y: auto; !* Make content scrollable if it overflows *!*/
 }
 
 /*!* Content area styling *!*/
@@ -65,7 +64,6 @@
 }
 
 .dropdown {
-
     background-color: #e6e6e6;
     border-radius: 1.5em;
     padding-left: .7em;
@@ -73,11 +71,14 @@
     padding-top: .3em;
     padding-bottom: .3em;
     font-size: .85em;
-
 }
 
 .row {
     padding-top:1.5em;
     padding-bottom:.5em;
+}
+
+.rowModel {
+    padding-bottom: .5em;
 }
 

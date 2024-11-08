@@ -66,6 +66,11 @@ const CurrentChat: FC = (): ReactElement => {
             const newMessage: Message = { role: "user", content: message };
             setMessages((prevMessages) => [...prevMessages, newMessage]);
 
+            // Check if sessionId is in the sessionList, if not, add it
+            if (!sessionList.includes(storageKey)) {
+                setSessionList((prevList) => [...prevList, storageKey]);
+            }
+
             // Add a placeholder for the assistant's response
             const assistantMessage: Message = { role: "assistant", content: "" };
             setMessages((prevMessages) => [...prevMessages, assistantMessage]);

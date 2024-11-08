@@ -11,7 +11,7 @@ import addCircle from '@jetbrains/icons/add-circle-filled-20px';
 import pastChatIcon from '@jetbrains/icons/artifacts-20px';
 
 import styles from './current-chat.module.css';
-import ChatBubble from "../Chat-Bubble/chat-bubble";
+import ChatBubble from "../ChatBubble/chat-bubble";
 import { Grid } from "@jetbrains/ring-ui-built/components/grid/grid";
 import Row from "@jetbrains/ring-ui-built/components/grid/row";
 import Text from "@jetbrains/ring-ui-built/components/text/text";

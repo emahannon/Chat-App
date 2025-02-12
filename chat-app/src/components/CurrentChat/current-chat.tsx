@@ -33,7 +33,7 @@ const CurrentChat: FC = (): ReactElement => {
 
     // It would be better to store the API key in a secure location, such as a server environment variable.
     // However, for the purpose of this demo, we will store it in the client-side code.
-    const API_KEY = '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';
+    const API_KEY = 'hf_apikeyhere';
     const inference = new HfInference(API_KEY);
     const historyRef = useRef<HTMLDivElement>(null);
 
